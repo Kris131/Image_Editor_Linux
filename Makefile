@@ -1,5 +1,19 @@
-build:
-	gcc *.c -o image_editor -lm -Wall -Wextra -std=c99
+CC=gcc
+CFLAGS=-g -lm -Wall -Wextra -std=c99
+DEPS=image_editor.c commands.h my_alloc.h my_defs.h read_print.h utils.h
+
+OBJ:=commands.o
+OBJ+=my_alloc.o
+OBJ+=read_print.o
+OBJ+=utils.o
+
+%.o: %.c
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+image_editor: $(DEPS) $(OBJ)
+	$(CC) -g -o $@ $^ $(CFLAGS)
+
+.PHONY: clean
 
 clean:
-	rm -f image_editor
+	rm -f *.o image_editor
