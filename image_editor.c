@@ -1,11 +1,14 @@
-// Copyright Mihai-Cosmin Nour 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
 
 #include <stdio.h>
 #include <string.h>
 #include "commands.h"
+#include "menu.h"
 
 int main(void)
 {
+	start_info(void);
+	
 	char command[BUFFER_SIZE] = "";
 	const char *command_list[N_COMMANDS] = {"LOAD", "SELECT", "HISTOGRAM",
 											"EQUALIZE", "ROTATE", "CROP",
@@ -21,6 +24,8 @@ int main(void)
 	image.color_img = NULL;
 	strcpy(image.header, "");
 	while (1) {
+		next_command(void);
+
 		scanf("%s", command);
 		switch (which_command(command, command_list, N_COMMANDS)) {
 		case 0:
