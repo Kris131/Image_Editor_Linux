@@ -7,12 +7,12 @@
 
 int main(void)
 {
-	start_info(void);
-	
+	start_info();
+
 	char command[BUFFER_SIZE] = "";
 	const char *command_list[N_COMMANDS] = {"LOAD", "SELECT", "HISTOGRAM",
 											"EQUALIZE", "ROTATE", "CROP",
-											"APPLY", "SAVE", "EXIT"};
+											"APPLY", "SAVE", "EXIT", "HELP"};
 	const char *apply_list[N_APPLY] = {"EDGE", "SHARPEN", "BLUR",
 									   "GAUSSIAN_BLUR"};
 	image_t image;
@@ -24,9 +24,8 @@ int main(void)
 	image.color_img = NULL;
 	strcpy(image.header, "");
 	while (1) {
-		next_command(void);
-
-		scanf("%s", command);
+		fgets(command, BUFFER_SIZE, stdin);
+		remove_newline(command);
 		switch (which_command(command, command_list, N_COMMANDS)) {
 		case 0:
 			load_cmd(&image, &sel);
@@ -55,7 +54,11 @@ int main(void)
 		case 8:
 			exit_cmd(image);
 			return 0;
+		case 9:
+			next_command();
+			break;
 		default:
+			printf("%s\n", command);
 			fgets(command, BUFFER_SIZE, stdin);
 			printf(INVALID_COMMAND);
 			break;

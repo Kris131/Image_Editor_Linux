@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
 
 #ifndef MY_DEFS_H_
 #define MY_DEFS_H_
@@ -23,7 +23,7 @@
 #define ROTATED "Rotated "
 #define SAVED "Saved "
 #define BUFFER_SIZE 50
-#define N_COMMANDS 9
+#define N_COMMANDS 10
 #define N_APPLY 4
 #define MAX_VALUE 256
 #define SMALL_SIZE 3

@@ -1,11 +1,12 @@
 CC=gcc
 CFLAGS=-g -lm -Wall -Wextra -std=c99
-DEPS=image_editor.c commands.h my_alloc.h my_defs.h read_print.h utils.h
+DEPS=image_editor.c menu.h commands.h my_alloc.h my_defs.h read_print.h utils.h
 
 OBJ:=commands.o
 OBJ+=my_alloc.o
 OBJ+=read_print.o
 OBJ+=utils.o
+OBJ+=menu.o
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)

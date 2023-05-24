@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
 
 #ifndef READ_PRINT_H_
 #define READ_PRINT_H_

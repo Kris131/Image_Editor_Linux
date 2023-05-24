@@ -7,6 +7,8 @@
 
 void start_info(void);
 
+void go_back(void);
+
 void next_command(void);
 
 #endif //   MENU_H_
