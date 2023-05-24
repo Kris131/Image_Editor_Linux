@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
@@ -14,11 +14,11 @@
 
 int which_command(char *command, const char **command_list, int n_commands);
 
-void load_cmd(image_t *image, selection_t *sel);
+void load_cmd(image_t *image, selection_t *sel, char *file_name);
 
-void select_cmd(image_t image, selection_t *sel);
+void select_cmd(image_t *image, selection_t *sel);
 
-void histogram_cmd(image_t image);
+void histogram_cmd(image_t *image);
 
 void equalize_cmd(image_t *image);
 
@@ -26,10 +26,12 @@ void rotate_cmd(image_t *image, selection_t *sel);
 
 void crop_cmd(image_t *image, selection_t *sel);
 
-void apply_cmd(image_t *image, selection_t sel, const char *apply_list[]);
+void apply_cmd(image_t *image, selection_t *sel, const char *apply_list[]);
 
-void save_cmd(image_t image);
+void save_cmd(image_t *image);
 
-void exit_cmd(image_t image);
+void exit_cmd(image_t *image, selection_t *sel);
+
+void open_cmd(char *file_name);
 
 #endif

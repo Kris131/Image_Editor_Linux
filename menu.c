@@ -1,18 +1,22 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "my_defs.h"
 #include "utils.h"
 
-void start_info(void)
+void start_info(char *file_name)
 {
 	system("clear");
 
 	printf("----------------IMAGE-EDITOR----------------\n\n");
 
-	printf("Add an image to begin. Use the command \"LOAD\".\n");
+	if (!strlen(file_name))
+		printf("Add an image to begin. Use the command \"LOAD\".\n");
+	else
+		printf("Current image: %s\n", file_name);
 
 	printf("Type \"HELP\" for more information.\n\n");
 
@@ -24,7 +28,6 @@ void go_back(void)
 	printf("\nPress enter to return to the menu.\n");
 
 	getchar();
-	start_info();
 }
 
 void next_command(void)

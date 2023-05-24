@@ -1,12 +1,12 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #include "utils.h"
 
 void swap_ints(int *x, int *y)
 {
-	int aux = *x;
-	*x = *y;
-	*y = aux;
+	*x = *x ^ *y;
+	*y = *x ^ *y;
+	*x = *x ^ *y;
 }
 
 int is_power_2(int x)
@@ -66,13 +66,13 @@ int max_matrix(int **a, int n, int m)
 }
 
 // Determine the frequency of each pixel value based on a given image
-void det_freq(int *freq, image_t image)
+void det_freq(int *freq, image_t *image)
 {
 	for (int i = 0; i < MAX_VALUE; ++i)
 		freq[i] = 0;
-	for (int i = 0; i < image.row_num; ++i) {
-		for (int j = 0; j < image.col_num; ++j)
-			freq[image.gray_img[i][j]]++;
+	for (int i = 0; i < image->row_num; ++i) {
+		for (int j = 0; j < image->col_num; ++j)
+			freq[image->gray_img[i][j]]++;
 	}
 }
 
@@ -144,13 +144,13 @@ void read_header(image_t *image, FILE **image_file)
 	image->max_value = atoi(content);
 }
 
-void crop(image_t *image, selection_t sel)
+void crop(image_t *image, selection_t *sel)
 {
 	int old_rows = image->row_num;
 
 	// Determine the size of the new image (after crop)
-	image->col_num = sel.y2 - sel.y1;
-	image->row_num = sel.x2 - sel.x1;
+	image->col_num = sel->y2 - sel->y1;
+	image->row_num = sel->x2 - sel->x1;
 
 	// Put the corresponding values from the old image to the new one
 	// depending on its type
@@ -159,7 +159,7 @@ void crop(image_t *image, selection_t sel)
 
 		for (int i = 0; i < image->row_num; ++i)
 			for (int j = 0; j < image->col_num; ++j)
-				new_img[i][j] = image->gray_img[sel.x1 + i][sel.y1 + j];
+				new_img[i][j] = image->gray_img[sel->x1 + i][sel->y1 + j];
 
 		// Eliminate the old image from memory and replace it
 		free_matrix(old_rows, image->gray_img);
@@ -169,7 +169,7 @@ void crop(image_t *image, selection_t sel)
 
 		for (int i = 0; i < image->row_num; ++i)
 			for (int j = 0; j < image->col_num; ++j)
-				new_img[i][j] = image->color_img[sel.x1 + i][sel.y1 + j];
+				new_img[i][j] = image->color_img[sel->x1 + i][sel->y1 + j];
 
 		// Eliminate the old image from memory and replace it
 		free_color_matrix(old_rows, image->color_img);
@@ -199,12 +199,12 @@ color_t color_t_mult(color_t x, int y)
 
 // Apply a kernel over a selection of the image
 void apply(image_t *image, const int apply_matrix[SMALL_SIZE][SMALL_SIZE],
-		   const int div, selection_t sel)
+		   const int div, selection_t *sel)
 {
 	color_t **temp_img = alloc_color_matrix(image->row_num,
 											image->col_num);
-	for (int i = sel.x1; i < sel.x2; ++i) {
-		for (int j = sel.y1; j < sel.y2; ++j) {
+	for (int i = sel->x1; i < sel->x2; ++i) {
+		for (int j = sel->y1; j < sel->y2; ++j) {
 			// Ignore border pixels
 			if (i == 0 || i == image->row_num - 1 ||
 				j == 0 || j == image->col_num - 1) {
@@ -238,8 +238,8 @@ void apply(image_t *image, const int apply_matrix[SMALL_SIZE][SMALL_SIZE],
 	}
 
 	// copy the new image in over the old image where the selection was made
-	for (int i = sel.x1; i < sel.x2; ++i) {
-		for (int j = sel.y1; j < sel.y2; ++j)
+	for (int i = sel->x1; i < sel->x2; ++i) {
+		for (int j = sel->y1; j < sel->y2; ++j)
 			image->color_img[i][j] = temp_img[i][j];
 	}
 
@@ -277,82 +277,82 @@ void rotate_image(image_t *image)
 }
 
 // Rotate a selection of the image
-void rotate_selection(image_t *image, selection_t sel)
+void rotate_selection(image_t *image, selection_t *sel)
 {
 	if (image->type[1] == '2' || image->type[1] == '5') {
 		// Determine the size of the selected area
-		int sel_rows = sel.x2 - sel.x1, sel_cols = sel.y2 - sel.y1;
+		int sel_rows = sel->x2 - sel->x1, sel_cols = sel->y2 - sel->y1;
 
 		// Create a new image containing the rotated image
 		int **temp_img = alloc_matrix(sel_rows, sel_cols);
 		for (int i = 0; i < sel_rows; ++i) {
 			for (int j = 0; j < sel_cols; ++j)
 				temp_img[j][sel_cols - 1 - i] =
-				image->gray_img[sel.x1 + i][sel.y1 + j];
+				image->gray_img[sel->x1 + i][sel->y1 + j];
 		}
 
 		// Copy the rotated image over the selected area in the old image
-		for (int i = sel.x1; i < sel.x2; ++i) {
-			for (int j = sel.y1; j < sel.y2; ++j)
-				image->gray_img[i][j] = temp_img[i - sel.x1][j - sel.y1];
+		for (int i = sel->x1; i < sel->x2; ++i) {
+			for (int j = sel->y1; j < sel->y2; ++j)
+				image->gray_img[i][j] = temp_img[i - sel->x1][j - sel->y1];
 		}
 
 		// Remove the temporary image from memory
 		free_matrix(sel_rows, temp_img);
 	} else {
 		// Same process for a color image
-		int sel_rows = sel.x2 - sel.x1, sel_cols = sel.y2 - sel.y1;
+		int sel_rows = sel->x2 - sel->x1, sel_cols = sel->y2 - sel->y1;
 
 		color_t **temp_img = alloc_color_matrix(sel_rows, sel_cols);
 		for (int i = 0; i < sel_rows; ++i) {
 			for (int j = 0; j < sel_cols; ++j)
 				temp_img[j][sel_cols - 1 - i] =
-				image->color_img[sel.x1 + i][sel.y1 + j];
+				image->color_img[sel->x1 + i][sel->y1 + j];
 		}
 
-		for (int i = sel.x1; i < sel.x2; ++i) {
-			for (int j = sel.y1; j < sel.y2; ++j)
-				image->color_img[i][j] = temp_img[i - sel.x1][j - sel.y1];
+		for (int i = sel->x1; i < sel->x2; ++i) {
+			for (int j = sel->y1; j < sel->y2; ++j)
+				image->color_img[i][j] = temp_img[i - sel->x1][j - sel->y1];
 		}
 		free_color_matrix(sel_rows, temp_img);
 	}
 }
 
 // Checks if the selection is inside the image
-int valid_coord(image_t image, selection_t sel)
+int valid_coord(image_t *image, selection_t *sel)
 {
-	if (sel.x1 < 0 || sel.x1 > image.row_num)
+	if (sel->x1 < 0 || sel->x1 > image->row_num)
 		return 0;
-	if (sel.x2 < 0 || sel.x2 > image.row_num)
+	if (sel->x2 < 0 || sel->x2 > image->row_num)
 		return 0;
-	if (sel.y1 < 0 || sel.y1 > image.col_num)
+	if (sel->y1 < 0 || sel->y1 > image->col_num)
 		return 0;
-	if (sel.y2 < 0 || sel.y2 > image.col_num)
+	if (sel->y2 < 0 || sel->y2 > image->col_num)
 		return 0;
-	if (sel.x1 == sel.x2 || sel.y1 == sel.y2)
+	if (sel->x1 == sel->x2 || sel->y1 == sel->y2)
 		return 0;
 	return 1;
 }
 
-int is_sel_square(selection_t sel)
+int is_sel_square(selection_t *sel)
 {
-	if (sel.x2 - sel.x1 == sel.y2 - sel.y1)
+	if (sel->x2 - sel->x1 == sel->y2 - sel->y1)
 		return 1;
 	return 0;
 }
 
-int is_whole_img(image_t image, selection_t sel)
+int is_whole_img(image_t *image, selection_t *sel)
 {
-	if (sel.x1 == 0 && sel.y1 == 0 &&
-		sel.x2 == image.row_num && sel.y2 == image.col_num)
+	if (sel->x1 == 0 && sel->y1 == 0 &&
+		sel->x2 == image->row_num && sel->y2 == image->col_num)
 		return 1;
 	return 0;
 }
 
-void select_all(image_t image, selection_t *sel)
+void select_all(image_t *image, selection_t *sel)
 {
 	sel->x1 = 0;
 	sel->y1 = 0;
-	sel->x2 = image.row_num;
-	sel->y2 = image.col_num;
+	sel->x2 = image->row_num;
+	sel->y2 = image->col_num;
 }

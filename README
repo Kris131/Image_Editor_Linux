@@ -1,6 +1,6 @@
-Copyright Mihai-Cosmin Nour 311CAb 2022-2023
+Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
-Homework 3 - PCLP1
+Project - PCLP3
 
 Usage:
     To build:
@@ -26,14 +26,17 @@ Usage:
         To apply a kernel over a selection of a color image:
         	APPLY <TYPE>
         	(where TYPE can be EDGE, SHARPEN, BLUR or GAUSSIAN_BLUR)
-        To save the edited image in a file
+        To save the edited image in a file:
         	SAVE <file name> [ascii]
         	(ascii for text file, nothing for binary file)
+        To open an image:
+            OPEN
         To exit the program:
         	EXIT
 
 Files used:
     - image_editor.c - main file;
+    - menu.c/.h - functions used for menu implementation
     - utils.c/.h - functions used in the program;
     - commands.c/.h - functions that do a certain command in main;
     - read_print.c/.h - functions used for reading and writing the image;
@@ -45,28 +48,14 @@ Files used:
 Algorithms used:
     - rotation of a matrix
     - histogram, equalization, application of edge detection, sharpen, blur
-    and gaussian blur for an image (full explanation in the document provided
-    by the PCLP team)
+    and gaussian blur for an image
 
 General idea:
     
     The program represents an image editor that works in the Linux terminal. It
     can use NetPBM format images, meaning it can edit P2, P3, P5 and P6 images.
-    The user can load an image from a file, edit it in a number of ways, and
-    then save it in a file.
+    The user can load an image from a file, edit it in a number of ways, save it
+    in a file and then maybe open it.
 
     Every memory allocation is followed by some defensive programming code to
     ensure the safety and security of the data.
-
-Encountered problems and fixes:
-    
-    1) Work with files (especially binary).
-    
-    A lot of the time I spent doing this homework was spent making the load and
-    save commands. It was a little difficult at first to understand in which
-    way I should open the file, how to read and how to store the data. In the
-    case of the binary file I also had to make sure I read and write byte after
-    byte, except for the header. After taking some time testing and
-    experimenting I am now confident I will be able to work better with files
-    from now on.
-

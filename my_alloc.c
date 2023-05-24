@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #include "my_alloc.h"
 

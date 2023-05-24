@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #include "commands.h"
 #include "menu.h"
@@ -13,13 +13,12 @@ int which_command(char *command, const char **command_list, int n_commands)
 }
 
 // Open a file and load the image
-void load_cmd(image_t *image, selection_t *sel)
+void load_cmd(image_t *image, selection_t *sel, char *file_name)
 {
 	system("clear");
 	printf("----------------LOAD----------------\n\n");
 	printf("Type the path to the wanted file: ");
 	FILE *image_file = NULL;
-	char file_name[BUFFER_SIZE] = "";
 	fgets(file_name, BUFFER_SIZE, stdin);
 	remove_newline(file_name);
 
@@ -38,6 +37,7 @@ void load_cmd(image_t *image, selection_t *sel)
 	image_file = fopen(file_name, "rt");
 	if (!image_file) {
 		printf("%s%s\n", LOAD_FAIL, file_name);
+		strcpy(file_name, "");
 		go_back();
 		return;
 	}
@@ -49,6 +49,7 @@ void load_cmd(image_t *image, selection_t *sel)
 		image_file = fopen(file_name, "rb");
 		if (!image_file) {
 			printf("%s%s\n", LOAD_FAIL, file_name);
+			strcpy(file_name, "");
 			go_back();
 			return;
 		}
@@ -75,7 +76,7 @@ void load_cmd(image_t *image, selection_t *sel)
 	}
 
 	// Select all and close the file
-	select_all(*image, sel);
+	select_all(image, sel);
 	fclose(image_file);
 
 	printf("%s%s\n", LOAD_SUCCES, file_name);
@@ -84,7 +85,7 @@ void load_cmd(image_t *image, selection_t *sel)
 }
 
 // Select
-void select_cmd(image_t image, selection_t *sel)
+void select_cmd(image_t *image, selection_t *sel)
 {
 	system("clear");
 	printf("----------------SELECT----------------\n\n");
@@ -99,7 +100,7 @@ void select_cmd(image_t image, selection_t *sel)
 	remove_newline(command);
 	remove_trailing_whitespace(command);
 
-	if (!image.gray_img && !image.color_img) {
+	if (!image->gray_img && !image->color_img) {
 		printf(NO_IMG_LOADED);
 		go_back();
 		return;
@@ -114,7 +115,7 @@ void select_cmd(image_t image, selection_t *sel)
 		select_all(image, sel);
 		printf("%s%s\n", SELECTED, command);
 	} else {
-		selection_t temp_sel;
+		selection_t *temp_sel = malloc(sizeof(selection_t));
 
 		// Get each coordinate from the command string
 		word = strtok(command, " ");
@@ -123,28 +124,28 @@ void select_cmd(image_t image, selection_t *sel)
 			go_back();
 			return;
 		}
-		temp_sel.y1 = atoi(word);
+		temp_sel->y1 = atoi(word);
 		word = strtok(NULL, " ");
 		if (!word || !is_number(word)) {
 			printf(INVALID_COMMAND);
 			go_back();
 			return;
 		}
-		temp_sel.x1 = atoi(word);
+		temp_sel->x1 = atoi(word);
 		word = strtok(NULL, " ");
 		if (!word || !is_number(word)) {
 			printf(INVALID_COMMAND);
 			go_back();
 			return;
 		}
-		temp_sel.y2 = atoi(word);
+		temp_sel->y2 = atoi(word);
 		word = strtok(NULL, " ");
 		if (!word || !is_number(word)) {
 			printf(INVALID_COMMAND);
 			go_back();
 			return;
 		}
-		temp_sel.x2 = atoi(word);
+		temp_sel->x2 = atoi(word);
 		word = strtok(NULL, " ");
 		if (word) {
 			printf(INVALID_COMMAND);
@@ -153,27 +154,29 @@ void select_cmd(image_t image, selection_t *sel)
 		}
 
 		// Put the coordinates in the right place
-		if (temp_sel.x1 > temp_sel.x2)
-			swap_ints(&temp_sel.x1, &temp_sel.x2);
-		if (temp_sel.y1 > temp_sel.y2)
-			swap_ints(&temp_sel.y1, &temp_sel.y2);
+		if (temp_sel->x1 > temp_sel->x2)
+			swap_ints(&temp_sel->x1, &temp_sel->x2);
+		if (temp_sel->y1 > temp_sel->y2)
+			swap_ints(&temp_sel->y1, &temp_sel->y2);
 		if (valid_coord(image, temp_sel) == 0) {
 			printf(INVALID_COORD);
 			go_back();
 			return;
 		}
-		sel->x1 = temp_sel.x1;
-		sel->y1 = temp_sel.y1;
-		sel->x2 = temp_sel.x2;
-		sel->y2 = temp_sel.y2;
+		sel->x1 = temp_sel->x1;
+		sel->y1 = temp_sel->y1;
+		sel->x2 = temp_sel->x2;
+		sel->y2 = temp_sel->y2;
 		printf("%s%d %d %d %d\n", SELECTED, sel->y1, sel->x1, sel->y2, sel->x2);
+
+		free(temp_sel);
 	}
 
 	go_back();
 }
 
 // Determine the histogram of a gray image
-void histogram_cmd(image_t image)
+void histogram_cmd(image_t *image)
 {
 	system("clear");
 	printf("----------------HISTOGRAM----------------\n\n");
@@ -189,7 +192,7 @@ void histogram_cmd(image_t image)
 	remove_newline(command);
 	remove_trailing_whitespace(command);
 
-	if (!image.gray_img && !image.color_img) {
+	if (!image->gray_img && !image->color_img) {
 		printf(NO_IMG_LOADED);
 		go_back();
 		return;
@@ -216,7 +219,7 @@ void histogram_cmd(image_t image)
 		go_back();
 		return;
 	}
-	if (image.type[1] == '3' || image.type[1] == '6') {
+	if (image->type[1] == '3' || image->type[1] == '6') {
 		printf(GRAY_IMG);
 		go_back();
 		return;
@@ -275,7 +278,7 @@ void equalize_cmd(image_t *image)
 	}
 
 	// Determine the frequency of each pixel and apply the formula
-	det_freq(freq, *image);
+	det_freq(freq, image);
 	for (int i = 0; i < image->row_num; ++i) {
 		for (int j = 0; j < image->col_num; ++j) {
 			int hist_sum = 0;
@@ -324,7 +327,7 @@ void rotate_cmd(image_t *image, selection_t *sel)
 		go_back();
 		return;
 	}
-	if (!is_sel_square(*sel) && !is_whole_img(*image, *sel)) {
+	if (!is_sel_square(sel) && !is_whole_img(image, sel)) {
 		printf(NO_SQUARE);
 		go_back();
 		return;
@@ -335,13 +338,13 @@ void rotate_cmd(image_t *image, selection_t *sel)
 		angle += CIRCLE_ANGLE;
 
 	// Rotate the desired selection of the image
-	if (is_sel_square(*sel)) {
+	if (is_sel_square(sel)) {
 		for (int i = 0; i < angle; i += SQUARE_ANGLE)
-			rotate_selection(image, *sel);
+			rotate_selection(image, sel);
 	} else {
 		for (int i = 0; i < angle; i += SQUARE_ANGLE) {
 			rotate_image(image);
-			select_all(*image, sel);
+			select_all(image, sel);
 		}
 	}
 	printf("%s%s\n", ROTATED, command);
@@ -359,15 +362,15 @@ void crop_cmd(image_t *image, selection_t *sel)
 		go_back();
 		return;
 	}
-	crop(image, *sel);
-	select_all(*image, sel);
+	crop(image, sel);
+	select_all(image, sel);
 	printf(IMG_CROPPED);
 
 	go_back();
 }
 
 // Apply kernel over the selection of the image
-void apply_cmd(image_t *image, selection_t sel, const char *apply_list[])
+void apply_cmd(image_t *image, selection_t *sel, const char *apply_list[])
 {
 	system("clear");
 	printf("---------------APPLY---------------\n\n");
@@ -441,7 +444,7 @@ void apply_cmd(image_t *image, selection_t sel, const char *apply_list[])
 }
 
 // Save the image in a file
-void save_cmd(image_t image)
+void save_cmd(image_t *image)
 {
 	system("clear");
 	printf("---------------SAVE---------------\n\n");
@@ -452,7 +455,7 @@ void save_cmd(image_t image)
 
 	// Read the entire command
 	fgets(command, BUFFER_SIZE, stdin);
-	if (!image.gray_img && !image.color_img) {
+	if (!image->gray_img && !image->color_img) {
 		printf(NO_IMG_LOADED);
 		go_back();
 		return;
@@ -464,16 +467,16 @@ void save_cmd(image_t image)
 
 	// Save as binary
 	if (!word) {
-		if (image.type[1] < '4') {
-			image.type[1] += 3;
-			image.header[1] += 3;
+		if (image->type[1] < '4') {
+			image->type[1] += 3;
+			image->header[1] += 3;
 		}
-		generate_header(&image);
+		generate_header(image);
 
 		// Open the save file as "write binary"
 		save_file = fopen(file_name, "wb");
-		fwrite(image.header, sizeof(char), strlen(image.header), save_file);
-		if (image.type[1] == '5')
+		fwrite(image->header, sizeof(char), strlen(image->header), save_file);
+		if (image->type[1] == '5')
 			print_gray_img_binary(image, &save_file);
 		else
 			print_color_img_binary(image, &save_file);
@@ -481,18 +484,18 @@ void save_cmd(image_t image)
 	} else {
 		// Save as text
 		if (strcmp(word, "ascii") == 0) {
-			if (image.type[1] > '4') {
-				image.type[1] -= 3;
-				image.header[1] -= 3;
+			if (image->type[1] > '4') {
+				image->type[1] -= 3;
+				image->header[1] -= 3;
 			}
-			generate_header(&image);
+			generate_header(image);
 			remove_newline(file_name);
 			remove_trailing_whitespace(file_name);
 
 			// Open the save file as "write text"
 			save_file = fopen(file_name, "wt");
-			fprintf(save_file, "%s", image.header);
-			if (image.type[1] == '2')
+			fprintf(save_file, "%s", image->header);
+			if (image->type[1] == '2')
 				print_gray_img_text(image, &save_file);
 			else
 				print_color_img_text(image, &save_file);
@@ -509,16 +512,30 @@ void save_cmd(image_t image)
 }
 
 // Exit the program
-void exit_cmd(image_t image)
+void exit_cmd(image_t *image, selection_t *sel)
 {
-	if (!image.gray_img && !image.color_img) {
+	if (!image->gray_img && !image->color_img) {
 		printf(NO_IMG_LOADED);
 		return;
 	}
 
 	// Free the memory
-	if (image.gray_img)
-		free_matrix(image.row_num, image.gray_img);
-	if (image.color_img)
-		free_color_matrix(image.row_num, image.color_img);
+	if (image->gray_img)
+		free_matrix(image->row_num, image->gray_img);
+	if (image->color_img)
+		free_color_matrix(image->row_num, image->color_img);
+
+	free(image);
+	free(sel);
+}
+
+void open_cmd(char *file_name) {
+	system("clear");
+	printf("---------------OPEN---------------\n\n");
+
+	char sys_command[BUFFER_SIZE] = "eog ";
+	strcat(sys_command, file_name);
+    system(sys_command);
+
+	go_back();
 }

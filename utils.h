@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #ifndef UTILS_H_
 #define UTILS_H_
@@ -24,7 +24,7 @@ int max_array(int *v, int n);
 
 int max_matrix(int **a, int n, int m);
 
-void det_freq(int *freq, image_t image);
+void det_freq(int *freq, image_t *image);
 
 void clamp(int *value);
 
@@ -34,25 +34,25 @@ void generate_header(image_t *image);
 
 void read_header(image_t *image, FILE **image_file);
 
-void crop(image_t *image, selection_t sel);
+void crop(image_t *image, selection_t *sel);
 
 color_t color_t_add(color_t x, color_t y);
 
 color_t color_t_mult(color_t x, int y);
 
 void apply(image_t *image, const int apply_matrix[SMALL_SIZE][SMALL_SIZE],
-		   const int div, selection_t sel);
+		   const int div, selection_t *sel);
 
 void rotate_image(image_t *image);
 
-void rotate_selection(image_t *image, selection_t sel);
+void rotate_selection(image_t *image, selection_t *sel);
 
-int valid_coord(image_t image, selection_t sel);
+int valid_coord(image_t *image, selection_t *sel);
 
-int is_sel_square(selection_t sel);
+int is_sel_square(selection_t *sel);
 
-int is_whole_img(image_t image, selection_t sel);
+int is_whole_img(image_t *image, selection_t *sel);
 
-void select_all(image_t image, selection_t *sel);
+void select_all(image_t *image, selection_t *sel);
 
 #endif

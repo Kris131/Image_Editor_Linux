@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
 
 #include <stdio.h>
 #include <string.h>
@@ -7,59 +7,62 @@
 
 int main(void)
 {
-	start_info();
 
-	char command[BUFFER_SIZE] = "";
+	char command[BUFFER_SIZE] = "", file_name[BUFFER_SIZE] = "";
 	const char *command_list[N_COMMANDS] = {"LOAD", "SELECT", "HISTOGRAM",
 											"EQUALIZE", "ROTATE", "CROP",
-											"APPLY", "SAVE", "EXIT", "HELP"};
+											"APPLY", "SAVE", "EXIT", "HELP",
+											"OPEN"};
 	const char *apply_list[N_APPLY] = {"EDGE", "SHARPEN", "BLUR",
 									   "GAUSSIAN_BLUR"};
-	image_t image;
-	selection_t sel;
-	image.row_num = 0;
-	image.col_num = 0;
-	image.max_value = 0;
-	image.gray_img = NULL;
-	image.color_img = NULL;
-	strcpy(image.header, "");
+	image_t *image = malloc(sizeof(image_t));
+	selection_t *sel = malloc(sizeof(selection_t));
+	image->row_num = 0;
+	image->col_num = 0;
+	image->max_value = 0;
+	image->gray_img = NULL;
+	image->color_img = NULL;
+	strcpy(image->header, "");
 	while (1) {
+		start_info(file_name);
+
 		fgets(command, BUFFER_SIZE, stdin);
 		remove_newline(command);
 		switch (which_command(command, command_list, N_COMMANDS)) {
 		case 0:
-			load_cmd(&image, &sel);
+			load_cmd(image, sel, file_name);
 			break;
 		case 1:
-			select_cmd(image, &sel);
+			select_cmd(image, sel);
 			break;
 		case 2:
 			histogram_cmd(image);
 			break;
 		case 3:
-			equalize_cmd(&image);
+			equalize_cmd(image);
 			break;
 		case 4:
-			rotate_cmd(&image, &sel);
+			rotate_cmd(image, sel);
 			break;
 		case 5:
-			crop_cmd(&image, &sel);
+			crop_cmd(image, sel);
 			break;
 		case 6:
-			apply_cmd(&image, sel, apply_list);
+			apply_cmd(image, sel, apply_list);
 			break;
 		case 7:
 			save_cmd(image);
 			break;
 		case 8:
-			exit_cmd(image);
+			exit_cmd(image, sel);
 			return 0;
 		case 9:
 			next_command();
 			break;
+		case 10:
+			open_cmd(file_name);
+			break;
 		default:
-			printf("%s\n", command);
-			fgets(command, BUFFER_SIZE, stdin);
 			printf(INVALID_COMMAND);
 			break;
 		}
