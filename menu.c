@@ -59,10 +59,16 @@ void next_command(void)
 	
 	printf("\t\tUse \"ascii\" for text file or nothing for binary file.\n");
 
-	printf("10. To open the image: \"OPEN\"\n");
+	printf("10. To open the image: \"OPEN\".\n");
 	printf("\t\tAfter opening the image, close the image to continue.\n");
 
-	printf("11. To exit the program: \"EXIT\".\n\n");
+	printf("11. To mirror the image: \"MIRROR\".\n");
+
+	printf("12. To apply the sepia filter to the image: \"FILTER\".\n");
+
+	printf("13. To convert a colored image to grayscale: \"CONVERT\".\n");
+
+	printf("14. To exit the program: \"EXIT\".\n\n");
 
 	go_back();
 }
