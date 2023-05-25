@@ -12,11 +12,14 @@ int main(void)
 	const char *command_list[N_COMMANDS] = {"LOAD", "SELECT", "HISTOGRAM",
 											"EQUALIZE", "ROTATE", "CROP",
 											"APPLY", "SAVE", "EXIT", "HELP",
-											"OPEN"};
+											"OPEN", "CONVERT", "MIRROR",
+											"FILTER"};
 	const char *apply_list[N_APPLY] = {"EDGE", "SHARPEN", "BLUR",
 									   "GAUSSIAN_BLUR"};
 	image_t *image = malloc(sizeof(image_t));
+	DIE(!image, "Malloc failed.\n");
 	selection_t *sel = malloc(sizeof(selection_t));
+	DIE(!sel, "Malloc failed.\n");
 	image->row_num = 0;
 	image->col_num = 0;
 	image->max_value = 0;
@@ -61,6 +64,15 @@ int main(void)
 			break;
 		case 10:
 			open_cmd(file_name);
+			break;
+		case 11:
+			convert_cmd(image);
+			break;
+		case 12:
+			mirror_cmd(image);
+			break;
+		case 13:
+			filter_cmd(image);
 			break;
 		default:
 			printf(INVALID_COMMAND);

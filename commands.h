@@ -34,4 +34,10 @@ void exit_cmd(image_t *image, selection_t *sel);
 
 void open_cmd(char *file_name);
 
+void convert_cmd(image_t *image);
+
+void mirror_cmd(image_t *image);
+
+void filter_cmd(image_t *image);
+
 #endif

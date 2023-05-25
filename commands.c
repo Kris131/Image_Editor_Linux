@@ -529,13 +529,101 @@ void exit_cmd(image_t *image, selection_t *sel)
 	free(sel);
 }
 
-void open_cmd(char *file_name) {
+void open_cmd(char *file_name)
+{
 	system("clear");
 	printf("---------------OPEN---------------\n\n");
 
 	char sys_command[BUFFER_SIZE] = "eog ";
 	strcat(sys_command, file_name);
     system(sys_command);
+
+	go_back();
+}
+
+void convert_cmd(image_t *image)
+{
+	system("clear");
+	printf("---------------CONVERT---------------\n\n");
+
+	if (!image->color_img) {
+		printf(CONVERTED);
+
+		go_back();
+		return;
+	}
+
+	image->type[1]--;
+	image->gray_img = alloc_matrix(image->row_num, image->col_num);
+	for (int i = 0; i < image->row_num; ++i) {
+		for (int j = 0; j < image->col_num; ++j) {
+			int avg = round((float)(image->color_img[i][j].red +
+					image->color_img[i][j].green +
+					image->color_img[i][j].blue) / 3);
+			image->gray_img[i][j] = avg;
+		}
+	}
+	free_color_matrix(image->row_num, image->color_img);
+	image->color_img = NULL;
+
+	printf(CONVERTED);
+
+	go_back();
+}
+
+void mirror_cmd(image_t *image)
+{
+	system("clear");
+	printf("---------------MIRROR---------------\n\n");
+
+	for (int i = 0; i < image->row_num; ++i) {
+		for (int j = 0; j < image->col_num / 2; ++j) {
+			swap_ints(&image->color_img[i][j].red, &image->color_img[i][image->col_num - j - 1].red);
+			swap_ints(&image->color_img[i][j].green, &image->color_img[i][image->col_num - j - 1].green);
+			swap_ints(&image->color_img[i][j].blue, &image->color_img[i][image->col_num - j - 1].blue);
+		}
+	}
+
+	printf(MIRRORED);
+
+	go_back();
+}
+
+void filter_cmd(image_t *image)
+{
+	system("clear");
+	printf("---------------FILTER (SEPIA)---------------\n\n");
+
+	if (!image->color_img) {
+		printf(COLOR_IMG);
+
+		go_back();
+		return;
+	}
+
+	for (int i = 0; i < image->row_num; ++i) {
+		for (int j = 0; j < image->col_num; ++j) {
+			color_t sepia;
+
+			sepia.red = 0.393 * image->color_img[i][j].red +
+						0.769 * image->color_img[i][j].green +
+						0.189 * image->color_img[i][j].blue;
+			sepia.green = 0.349 * image->color_img[i][j].red +
+						0.686 * image->color_img[i][j].green +
+						0.168 * image->color_img[i][j].blue;
+			sepia.blue = 0.272 * image->color_img[i][j].red +
+						0.534 * image->color_img[i][j].green +
+						0.131 * image->color_img[i][j].blue;
+
+			clamp(&sepia.red);
+			clamp(&sepia.green);
+			clamp(&sepia.blue);
+
+			image->color_img[i][j] = sepia;
+		}
+	}
+
+	printf(SEPIA_FILTER);
 
 	go_back();
 }

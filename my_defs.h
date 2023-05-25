@@ -20,6 +20,7 @@
 #define NO_IMG_LOADED "No image loaded\n"
 #define INVALID_COMMAND "Invalid command\n"
 #define GRAY_IMG "Black and white image needed\n"
+#define COLOR_IMG "Color image needed\n"
 #define EQUALIZE_SUCCES "Equalize done\n"
 #define INVALID_COORD "Invalid set of coordinates\n"
 #define SELECTED "Selected "
@@ -34,8 +35,11 @@
 #define NO_SQUARE "The selection must be square\n"
 #define ROTATED "Rotated "
 #define SAVED "Saved "
+#define CONVERTED "Converted image to grayscale\n"
+#define SEPIA_FILTER "Applied sepia filter to image\n"
+#define MIRRORED "Image mirrored\n"
 #define BUFFER_SIZE 50
-#define N_COMMANDS 10
+#define N_COMMANDS 14
 #define N_APPLY 4
 #define MAX_VALUE 256
 #define SMALL_SIZE 3
