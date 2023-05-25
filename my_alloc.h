@@ -1,4 +1,4 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
 
 #ifndef MY_ALLOC_H_
 #define MY_ALLOC_H_
@@ -17,4 +17,4 @@ void free_matrix(int n, int **a);
 
 void free_color_matrix(int n, color_t **a);
 
-#endif
+#endif //  MY_ALLOC_H_

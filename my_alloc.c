@@ -1,22 +1,15 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
 
 #include "my_alloc.h"
 
 int **alloc_matrix(int n, int m)
 {
 	int **a = (int **)malloc(n * sizeof(int *));
-	if (!a) {
-		fprintf(stderr, "Malloc failed.\n");
-		exit(-1);
-	}
+	DIE(!a, "Malloc failed.\n");
 
 	for (int i = 0; i < n; ++i) {
 		*(a + i) = (int *)malloc(m * sizeof(int));
-		if (*(a + i) == NULL) {
-			fprintf(stderr, "Malloc failed.\n");
-			free_matrix(i, a);
-			exit(-1);
-		}
+		DIE(!*(a + i), "Malloc failed.\n");
 	}
 	return a;
 }
@@ -24,18 +17,13 @@ int **alloc_matrix(int n, int m)
 color_t **alloc_color_matrix(int n, int m)
 {
 	color_t **a = (color_t **)malloc(n * sizeof(color_t *));
-	if (!a) {
-		fprintf(stderr, "Malloc failed.\n");
-		exit(-1);
-	}
+	DIE(!a, "Malloc failed.\n");
+
 
 	for (int i = 0; i < n; ++i) {
 		*(a + i) = (color_t *)malloc(m * sizeof(color_t));
-		if (*(a + i) == NULL) {
-			fprintf(stderr, "Malloc failed.\n");
-			free_color_matrix(i, a);
-			exit(-1);
-		}
+		DIE(!*(a + i), "Malloc failed.\n");
+
 	}
 	return a;
 }
@@ -43,10 +31,7 @@ color_t **alloc_color_matrix(int n, int m)
 int *alloc_array(int n)
 {
 	int *v = (int *)malloc(n * sizeof(int));
-	if (!v) {
-		fprintf(stderr, "Malloc failed.\n");
-		exit(-1);
-	}
+	DIE(!v, "Malloc failed.\n");
 	return v;
 }
 

@@ -1,7 +1,19 @@
-// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CA 2022-2023
+// Copyright Mihai-Cosmin Nour & David-Cristian Bacalu 311CAb 2022-2023
 
 #ifndef MY_DEFS_H_
 #define MY_DEFS_H_
+
+#include <errno.h>
+
+#define DIE(assertion, call_description)            \
+	do {                                            \
+		if (assertion) {                            \
+			fprintf(stderr, "(%s, %d): ", __FILE__, \
+					__LINE__);                      \
+			perror(call_description);               \
+			exit(errno);                            \
+		}                                           \
+	} while (0)
 
 #define LOAD_FAIL "Failed to load "
 #define LOAD_SUCCES "Loaded "
@@ -23,7 +35,7 @@
 #define ROTATED "Rotated "
 #define SAVED "Saved "
 #define BUFFER_SIZE 50
-#define N_COMMANDS 11
+#define N_COMMANDS 10
 #define N_APPLY 4
 #define MAX_VALUE 256
 #define SMALL_SIZE 3
