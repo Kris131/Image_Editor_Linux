@@ -31,6 +31,12 @@ Usage:
         	(ascii for text file, nothing for binary file)
         To open an image:
             OPEN
+        To convert an image from color to grayscale:
+            CONVERT
+        To mirror an image:
+            MIRROR
+        To apply sepia filter to color image:
+            FILTER
         To exit the program:
         	EXIT
 
@@ -49,6 +55,7 @@ Algorithms used:
     - rotation of a matrix
     - histogram, equalization, application of edge detection, sharpen, blur
     and gaussian blur for an image
+    - sepia filter
 
 General idea:
     
